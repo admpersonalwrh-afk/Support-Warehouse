@@ -91,7 +91,7 @@
 <body class="d-flex flex-column min-vh-100 justify-content-between p-3 p-md-5">
     <div class="container my-auto" style="max-width: 480px;">
         
-        <!-- HALAMAN 1: LOGIN HANYA NIK -->
+        <!-- HALAMAN 1: LOGIN NIK -->
         <div id="loginSection" class="card-box p-4 p-md-5">
             <div class="text-center mb-4">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjjQ0KG8XLk69cJr3Es786wKiB3ug-v46kmbatp05O_-Lop7co52YEUvS&s=10" alt="Logo PT" class="company-logo mb-3">
@@ -139,21 +139,11 @@
                 <div class="mb-3" id="groupManpowerWrapper">
                     <label class="form-label small fw-semibold text-secondary d-block">Manpower Group <span class="text-danger">*</span></label>
                     <div class="row g-2">
-                        <div class="col-6">
-                            <button type="button" class="btn option-btn w-100" id="btnGroupA" onclick="selectGroup('Group A')">Group A</button>
-                        </div>
-                        <div class="col-6">
-                            <button type="button" class="btn option-btn w-100" id="btnGroupB" onclick="selectGroup('Group B')">Group B</button>
-                        </div>
-                        <div class="col-6">
-                            <button type="button" class="btn option-btn w-100" id="btnGroupC" onclick="selectGroup('Group C')">Group C</button>
-                        </div>
-                        <div class="col-6">
-                            <button type="button" class="btn option-btn w-100" id="btnNonShift" onclick="selectGroup('Non Shift')">Non Shift</button>
-                        </div>
-                        <div class="col-6">
-                            <button type="button" class="btn option-btn w-100" id="btnDeptLain" onclick="selectGroup('Dept Lain')">Dept Lain</button>
-                        </div>
+                        <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnGroupA" onclick="selectGroup('Group A')">Group A</button></div>
+                        <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnGroupB" onclick="selectGroup('Group B')">Group B</button></div>
+                        <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnGroupC" onclick="selectGroup('Group C')">Group C</button></div>
+                        <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnNonShift" onclick="selectGroup('Non Shift')">Non Shift</button></div>
+                        <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnDeptLain" onclick="selectGroup('Dept Lain')">Dept Lain</button></div>
                     </div>
                 </div>
 
@@ -247,24 +237,35 @@
             selectedStatus = status;
             document.getElementById('btnPinjam').classList.remove('active');
             document.getElementById('btnKembali').classList.remove('active');
+            
+            const tabletInput = document.getElementById('tabletVal');
+            const rfidInput = document.getElementById('rfidVal');
+            const spiderInput = document.getElementById('spiderVal');
+
             if (status === 'PINJAM') {
                 document.getElementById('btnPinjam').classList.add('active');
+                tabletInput.value = "";
+                rfidInput.value = "";
+                spiderInput.value = "";
             } else {
                 document.getElementById('btnKembali').classList.add('active');
                 
-                // FITUR OTOMATIS ISI ASSET SAAT KLIK KEMBALI
-                const tabletInput = document.getElementById('tabletVal');
                 tabletInput.value = "Memuat asset...";
+                rfidInput.value = "Memuat...";
+                spiderInput.value = "Memuat...";
+
                 try {
                     const response = await fetch(`${WEB_APP_URL}?action=getAssetAktif&nik=${currentNik}`);
                     const data = await response.json();
-                    tabletInput.value = data.asset || "";
-                    if (!data.asset) {
-                        tabletInput.placeholder = "Tidak ada riwayat pinjam aktif, ketik manual";
-                    }
+                    
+                    tabletInput.value = data.tablet || "";
+                    rfidInput.value = data.rfid || "";
+                    spiderInput.value = data.spider || "";
                 } catch (e) {
                     console.error(e);
                     tabletInput.value = "";
+                    rfidInput.value = "";
+                    spiderInput.value = "";
                 }
             }
             updateFormLayout();
@@ -272,11 +273,9 @@
 
         function selectGroup(groupName) {
             selectedGroup = groupName;
-            document.getElementById('btnGroupA').classList.remove('active');
-            document.getElementById('btnGroupB').classList.remove('active');
-            document.getElementById('btnGroupC').classList.remove('active');
-            document.getElementById('btnNonShift').classList.remove('active');
-            document.getElementById('btnDeptLain').classList.remove('active');
+            ['btnGroupA', 'btnGroupB', 'btnGroupC', 'btnNonShift', 'btnDeptLain'].forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
             if (groupName === 'Group A') document.getElementById('btnGroupA').classList.add('active');
             else if (groupName === 'Group B') document.getElementById('btnGroupB').classList.add('active');
             else if (groupName === 'Group C') document.getElementById('btnGroupC').classList.add('active');
@@ -297,13 +296,13 @@
                 spiderWrapper.style.display = 'block';
                 labelTablet.innerHTML = 'No. Tablet / PDA <span class="text-danger">*</span>';
                 tabletInput.required = true;
-                tabletInput.value = ""; // Kosongkan saat mau pinjam baru
             } else {
+                // Saat KEMBALI, tampilkan semua kolom agar semua asset yang dipinjam (Tablet, RFID, Spider) muncul utuh
                 groupWrapper.style.display = 'none';
-                rfidWrapper.style.display = 'none';
-                spiderWrapper.style.display = 'none';
-                labelTablet.innerHTML = 'No. Asset yang Dikembalikan <span class="text-danger">*</span>';
-                tabletInput.required = true;
+                rfidWrapper.style.display = 'block';
+                spiderWrapper.style.display = 'block';
+                labelTablet.innerHTML = 'No. Tablet / PDA yang Dikembalikan';
+                tabletInput.required = false;
             }
         }
 
@@ -342,18 +341,15 @@
                 alertBox.innerText = "Data berhasil diinput ke system!";
                 alertBox.classList.remove('d-none');
 
-                // Jika statusnya KEMBALI, setelah sukses submit langsung LOGOUT otomatis
                 if (selectedStatus === 'KEMBALI') {
                     setTimeout(() => {
-                        backToLogin(); // Kembali ke halaman awal/login NIK
-                    }, 1200); // Jeda 1.2 detik agar pesan sukses sempat terlihat
+                        backToLogin(); 
+                    }, 1200);
                 } else {
-                    // Jika statusnya PINJAM, form dikosongkan saja tanpa logout
                     document.getElementById('tabletVal').value = "";
                     document.getElementById('rfidVal').value = "";
                     document.getElementById('spiderVal').value = "";
                 }
-
             } catch (err) {
                 console.error(err);
                 alertBox.className = "alert alert-danger py-2 small text-center mb-3";
