@@ -337,13 +337,23 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
                 alertBox.className = "alert alert-success py-2 small text-center mb-3";
                 alertBox.innerText = "Data berhasil diinput ke system!";
                 alertBox.classList.remove('d-none');
 
-                document.getElementById('tabletVal').value = "";
-                document.getElementById('rfidVal').value = "";
-                document.getElementById('spiderVal').value = "";
+                // Jika statusnya KEMBALI, setelah sukses submit langsung LOGOUT otomatis
+                if (selectedStatus === 'KEMBALI') {
+                    setTimeout(() => {
+                        backToLogin(); // Kembali ke halaman awal/login NIK
+                    }, 1200); // Jeda 1.2 detik agar pesan sukses sempat terlihat
+                } else {
+                    // Jika statusnya PINJAM, form dikosongkan saja tanpa logout
+                    document.getElementById('tabletVal').value = "";
+                    document.getElementById('rfidVal').value = "";
+                    document.getElementById('spiderVal').value = "";
+                }
+
             } catch (err) {
                 console.error(err);
                 alertBox.className = "alert alert-danger py-2 small text-center mb-3";
