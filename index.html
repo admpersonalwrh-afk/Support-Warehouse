@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Asset Warehouse 1 FG</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* --- GAYA NAVBAR: 30% BIRU LOGO (#1B365D), 70% PUTIH (GARIS MIRING) --- */
+    .navbar {
+      background: linear-gradient(110deg, #1B365D 30%, #ffffff 30%);
+      border-bottom: 4px solid #11223F;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Teks Navbar: Outline/Shadow agar terbaca jelas di atas gradasi dua warna */
+    .judul-navbar {
+      color: #ffffff;
+      font-weight: 700;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9), -1px -1px 4px rgba(0,0,0,0.5);
+    }
+
+    /* Tombol Refresh disesuaikan dengan warna biru logo */
+    .navbar .btn-refresh {
+      background-color: #1B365D;
+      color: #fff;
+      border: 1px solid #11223F;
+    }
+    .navbar .btn-refresh:hover {
+      background-color: #11223F;
+      color: #fff;
+    }
+    /* -------------------------------------------------------------------- */
+
+    /* Card Stat Warna-Warni cerah & Klik-able */
+    .card-stat {
+      border: none;
+      border-radius: 12px;
+      transition: transform 0.2s, box-shadow 0.2s, outline 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-stat:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    .card-stat.active-filter {
+      outline: 3px solid #000;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    /* Penataan Tabel */
+    .table-container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* Badge Custom */
+    .badge-sudah {
+      background-color: #198754;
+      color: white;
+      font-weight: 600;
+    }
+    .badge-belum {
+      background-color: #dc3545;
+      color: white;
+      font-weight: 600;
+    }
+    .badge-tersedia {
+      background-color: #0d6efd;
+      color: white;
+      font-weight: 600;
+    }
+    .badge-dipinjam {
+      background-color: #ffc107;
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* Pewarnaan Khusus Tab Group MP */
+    .nav-tabs .nav-link {
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
+      color: #6c757d;
+    }
+
+    /* Tab Group A - Biru */
+    #groupA-tab.active {
+      background-color: #0d6efd !important;
+      color: #ffffff !important;
+      border-color: #0d6efd !important;
+    }
+    
+    /* Tab Group B - Hijau */
+    #groupB-tab.active {
+      background-color: #198754 !important;
+      color: #ffffff !important;
+      border-color: #198754 !important;
+    }
+
+    /* Tab Group C - Oranye */
+    #groupC-tab.active {
+      background-color: #fd7e14 !important;
+      color: #ffffff !important;
+      border-color: #fd7e14 !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar mb-4 py-2">
+    <div class="container-fluid px-4">
+      <span class="navbar-brand mb-0 h1 d-flex align-items-center">
+        <!-- Logo Image Base64 -->
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAMAAADUMSJqAAAAnFBMVEX///8MGU0aNIEAADrv7/LMzdMAKX2Fi7EAADcAC0gAADwIF0wAAEIAAEQAFnj7+/wAFEsAAD8AD0lzdYvh4eaFh58AADOIjql4e5Bsboafo7QfNn0VHlGHkLTm5+u1tsEjK1haXXmVmKphZYAAHngADVUeMW4EHl0XKGMYJ11+haLV1tyLjJxARGYwNFjBwstQVXWqq7UqM103PWM3ZxmmAAADeElEQVRoge2YAZObKBSApTZXEbgAhjRSowK9vWujq8b//9/uobeb7OVqNJ1OZ3p+k4wvBL4gyIsYBCsrKysrKyv/a95/J1Pu7T66Ivz9Hp//iMKR2BPG2yk5JuhC9undPT5lV/URIfPl991gfyPPJoflSk6eZsmzh+RfZqgf7vnTPPnT1UDybHLM5aXqnEEZun5pwsvJnlPKRuifv83j3V9fOHtphKZ6Hnz9+MrxePxwn+MRqqoX7JR75SdiE2fSYghPB8+Q76pDMpTlxiVJMl4ZVZqmrlgkPzOMWT2EKoaLTOQ+fGbi4I+bCFO6b4bfEVBzLJ1Nz2Exi93wOxAiNso5G+WxLxrC4hLO77k3is53jfmkQXejnCYvcsLPPkwofD2WLpCTkmDnuyYgTY/y7flKDkpfhuHLpfKSyxbGxXeNYcfQjTxz0p/Ybk+ea47ThXKqeh6dfCS0+EdevspJWTEfd1S6BC+WM2sk075rsriVI9zEPgc6zHT6gLzSTLa+a2YjboclzBmJdjA34ck9IFe7CP5ZUkw1uG7k8dZganOBwqCVy+WHIEQihyE//af8/XBOsTQPyh0WRcZJcCV/XURxngveWyaKoH5AngSd4Gd/DW/CW3m4gzoZzHnu5UsXEcjzGBZI2ICc0PxfcpjMiiECUx7UfPEK9Q1qCQt/6+Vjbumv5Cd/QohZX7pQ3jMK42hj7A+bPaaj/DUryv0u2DKG/TKrGV2WuJQxGhZ369oNZPTWuSGfH4ZSKDemhWxeOWfgU2VMt0i+8obNdzLl3r5sFB4jQpPyNzf/i7lzI/pNOflGvFjOKYKjxAhhLgm8JMKSIwYFFHOCKbwJRhjDGxYphJyNDe/LIdntixIby5h9VmWfIBUr3VMLfzkHXZe6S7EVlUhsKhTnminaF93Qsry74ZKmMU1Pq05QrW3ZqkxHOilFo+NWCS5rRWUTdVHl9F7zsoBDca79YM3YtuBUbVSLC+2EPRRlX2U21ElmmqasVSh5WzFeREVkKxVqdE41yDPd8lly6WrV1rWTSqRCZ1Lrnh0Qq86upQdby95JZouWOa5EkpUGzqTutL+NmrMPlZxJzjHx88rghohyP8GMS4l8zCXMopBIDhUI1IZLgPpbtCWb3MUQ+SPleFL+5sHC1SOGCeILYTS5m/uRj0RWVlZWVlZWfn3+BuAWYvoiRh61AAAAAElFTkSuQmCC" alt="Logo" width="40" height="40" class="me-3 rounded bg-white p-1 shadow-sm">
+        <span class="judul-navbar">Dashboard Asset Warehouse 1 Finished Goods</span>
+      </span>
+      <button class="btn btn-refresh btn-sm fw-semibold rounded px-3 py-2" onclick="loadDashboardData()">
+        <i class="fa-solid fa-arrows-rotate me-1"></i> Refresh Data
+      </button>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4 pb-4">
+    
+    <!-- Info Last Sync -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h5 class="text-secondary fw-bold m-0">Stock Asset Warehouse 1 Finished Goods</h5>
+        <small class="text-muted">Klik kartu asset dibawah untuk menyortir data Asset</small>
+      </div>
+      <span class="badge bg-white text-muted border px-3 py-2 shadow-sm" id="lastSyncText">
+        <i class="fa-regular fa-clock me-1"></i> Terakhir diperbarui: -
+      </span>
+    </div>
+
+    <!-- Cards Summary Berwarna Cerah (Bisa Klik Filter) -->
+    <div class="row g-3 mb-4">
+      <!-- Tablet / PDA (Biru) -->
+      <div class="col-md">
+        <div class="card card-stat bg-primary text-white p-3" id="cardTablet" onclick="filterByCategory('TABLET', 'cardTablet')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-white-50 text-uppercase fw-bold">Tablet</small>
+              <h2 class="m-0 fw-bold" id="cntTablet">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-tablet-button fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- RFID Gun (Hijau) -->
+      <div class="col-md">
+        <div class="card card-stat bg-success text-white p-3" id="cardRfid" onclick="filterByCategory('RFID', 'cardRfid')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-white-50 text-uppercase fw-bold">RFID Gun</small>
+              <h2 class="m-0 fw-bold" id="cntRfid">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-gun fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spider (Kuning / Scanner) -->
+      <div class="col-md">
+        <div class="card card-stat bg-warning text-dark p-3" id="cardSpider" onclick="filterByCategory('SPIDER', 'cardSpider')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-dark-50 text-uppercase fw-bold">Spider</small>
+              <h2 class="m-0 fw-bold" id="cntSpider">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-barcode fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charger (Cyan/Info) -->
+      <div class="col-md">
+        <div class="card card-stat bg-info text-white p-3" id="cardCharger" onclick="filterByCategory('CHARGER', 'cardCharger')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-white-50 text-uppercase fw-bold">Charger</small>
+              <h2 class="m-0 fw-bold" id="cntCharger">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-plug-circle-bolt fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charger Dock -->
+      <div class="col-md">
+        <div class="card card-stat text-dark p-3" id="cardDock" onclick="filterByCategory('DOCK', 'cardDock')" style="background-color: #e2e3e5;">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-muted text-uppercase fw-bold">Dock Charger</small>
+              <h2 class="m-0 fw-bold" id="cntDock">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-charging-station fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Powerbank (Abu-abu / Dark) -->
+      <div class="col-md">
+        <div class="card card-stat bg-secondary text-white p-3" id="cardPowerbank" onclick="filterByCategory('POWERBANK', 'cardPowerbank')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-white-50 text-uppercase fw-bold">Powerbank</small>
+              <h2 class="m-0 fw-bold" id="cntPowerbank">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-bolt-lightning fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Handy Talky / HT (Indigo / Ungu) -->
+      <div class="col-md">
+        <div class="card card-stat text-white p-3" id="cardHt" onclick="filterByCategory('HT', 'cardHt')" style="background-color: #6610f2;">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-white-50 text-uppercase fw-bold">Handy Talky</small>
+              <h2 class="m-0 fw-bold" id="cntHt">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-walkie-talkie fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Baterai RFID Gun Cadangan (Teal) -->
+      <div class="col-md">
+        <div class="card card-stat text-white p-3" id="cardBaterai" onclick="filterByCategory('BATERAI', 'cardBaterai')" style="background-color: #20c997;">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-white-50 text-uppercase fw-bold">Baterai</small>
+              <h2 class="m-0 fw-bold" id="cntBaterai">0 / 0</h2>
+            </div>
+            <i class="fa-solid fa-car-battery fa-3x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="row g-4">
+      
+      <!-- Tabel Master Data Asset (Kiri) - Dipersempit jadi col-lg-5 -->
+      <div class="col-lg-5">
+        <div class="table-container">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold m-0" id="tblTitle"><i class="fa-solid fa-list me-2"></i> Daftar Asset</h5>
+            <input type="text" id="searchAsset" class="form-control form-control-sm w-50" placeholder="Cari Asset..." onkeyup="filterAssetTable()">
+          </div>
+          <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover align-middle mb-0" id="tblAssets">
+              <thead class="table-dark sticky-top">
+                <tr>
+                  <th>No</th>
+                  <th>Kategori</th>
+                  <th>Nama Asset</th>
+                  <th>Type</th>
+                  <th>Serial Number</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="bodyAssets">
+                <tr><td colspan="6" class="text-center py-4">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabel Status Pengisian & Pengembalian MP (Kanan) - Diperlebar jadi col-lg-7 -->
+      <div class="col-lg-7">
+        <div class="table-container">
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-users me-2"></i> Status Manpower (MP)</h5>
+          
+          <!-- Tab Group A, B, C Berwarna -->
+          <ul class="nav nav-tabs nav-justified mb-3" id="mpTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="groupA-tab" data-bs-toggle="tab" data-bs-target="#groupA" type="button" role="tab">
+                <i class="fa-solid fa-user-group me-1"></i> Group A
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="groupB-tab" data-bs-toggle="tab" data-bs-target="#groupB" type="button" role="tab">
+                <i class="fa-solid fa-user-group me-1"></i> Group B
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="groupC-tab" data-bs-toggle="tab" data-bs-target="#groupC" type="button" role="tab">
+                <i class="fa-solid fa-user-group me-1"></i> Group C
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="mpTabContent">
+            <!-- Group A -->
+            <div class="tab-pane fade show active" id="groupA" role="tabpanel">
+              <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.75rem;">
+                  <thead class="table-secondary sticky-top">
+                    <tr>
+                      <th>NIK</th>
+                      <th>Nama</th>
+                      <th>No HP</th>
+                      <th>Tablet</th>
+                      <th>RFID</th>
+                      <th>Spider</th>
+                      <th class="text-center">Form</th>
+                      <th class="text-center">Kembali</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bodyGroupA"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Group B -->
+            <div class="tab-pane fade" id="groupB" role="tabpanel">
+              <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.75rem;">
+                  <thead class="table-secondary sticky-top">
+                    <tr>
+                      <th>NIK</th>
+                      <th>Nama</th>
+                      <th>No HP</th>
+                      <th>Tablet</th>
+                      <th>RFID</th>
+                      <th>Spider</th>
+                      <th class="text-center">Form</th>
+                      <th class="text-center">Kembali</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bodyGroupB"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Group C -->
+            <div class="tab-pane fade" id="groupC" role="tabpanel">
+              <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+                <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.75rem;">
+                  <thead class="table-secondary sticky-top">
+                    <tr>
+                      <th>NIK</th>
+                      <th>Nama</th>
+                      <th>No HP</th>
+                      <th>Tablet</th>
+                      <th>RFID</th>
+                      <th>Spider</th>
+                      <th class="text-center">Form</th>
+                      <th class="text-center">Kembali</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bodyGroupC"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    let globalAssets = [];
+    let selectedCategoryFilter = "";
+
+    document.addEventListener("DOMContentLoaded", function() {
+      loadDashboardData();
+    });
+
+    function loadDashboardData() {
+      google.script.run
+        .withSuccessHandler(renderDashboard)
+        .withFailureHandler(function(err) {
+          alert("Gagal memuat data: " + err.message);
+        })
+        .getAssetData();
+    }
+
+    function renderDashboard(data) {
+      function formatStat(obj) {
+        if (!obj) return "0 / 0";
+        return `${obj.tersedia} / ${obj.total}`;
+      }
+
+      document.getElementById("cntTablet").innerText = formatStat(data.tablet);
+      document.getElementById("cntRfid").innerText = formatStat(data.rfid);
+      document.getElementById("cntSpider").innerText = formatStat(data.spider);
+      document.getElementById("cntCharger").innerText = formatStat(data.charger);
+      document.getElementById("cntDock").innerText = formatStat(data.dock);
+      document.getElementById("cntPowerbank").innerText = formatStat(data.powerbank);
+      document.getElementById("cntHt").innerText = formatStat(data.ht);
+      document.getElementById("cntBaterai").innerText = formatStat(data.baterai);
+      
+      document.getElementById("lastSyncText").innerHTML = `<i class="fa-regular fa-clock me-1"></i> Terakhir diperbarui: ${data.lastSync}`;
+
+      globalAssets = data.assets;
+      filterAssetTable();
+
+      renderMpTable("bodyGroupA", data.mpGroups.groupA);
+      renderMpTable("bodyGroupB", data.mpGroups.groupB);
+      renderMpTable("bodyGroupC", data.mpGroups.groupC);
+    }
+
+    /* Fungsi Filter Berdasarkan Kartu Kategori */
+    function filterByCategory(categoryKey, cardId) {
+      const cards = document.querySelectorAll('.card-stat');
+      
+      if (selectedCategoryFilter === categoryKey) {
+        selectedCategoryFilter = "";
+        cards.forEach(c => c.classList.remove('active-filter'));
+        document.getElementById("tblTitle").innerHTML = `<i class="fa-solid fa-list me-2"></i> Daftar Asset`;
+      } else {
+        selectedCategoryFilter = categoryKey;
+        cards.forEach(c => c.classList.remove('active-filter'));
+        document.getElementById(cardId).classList.add('active-filter');
+        document.getElementById("tblTitle").innerHTML = `<i class="fa-solid fa-filter me-2"></i> Daftar Asset (${categoryKey})`;
+      }
+
+      filterAssetTable();
+    }
+
+    function renderAssetTable(assets) {
+      const tbody = document.getElementById("bodyAssets");
+      if (!assets || assets.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3">Tidak ada data asset yang sesuai.</td></tr>';
+        return;
+      }
+
+      let html = "";
+      assets.forEach((item, index) => {
+        let badgeClass = item.status.toUpperCase() === "TERSEDIA" ? "badge-tersedia" : "badge-dipinjam";
+        html += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${item.kategori}</td>
+            <td class="fw-bold">${item.nama}</td>
+            <td>${item.type || '-'}</td>
+            <td>${item.serial || '-'}</td>
+            <td class="text-center"><span class="badge ${badgeClass}">${item.status}</span></td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function renderMpTable(elementId, mpList) {
+      const tbody = document.getElementById(elementId);
+      if (!mpList || mpList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-2">Tidak ada data MP.</td></tr>';
+        return;
+      }
+
+      let html = "";
+      mpList.forEach(item => {
+        let formBadge = item.statusForm === "SUDAH" 
+          ? '<span class="badge badge-sudah">SUDAH</span>' 
+          : '<span class="badge badge-belum">BELUM</span>';
+
+        let kembaliBadge = '-';
+        if (item.statusKembali === "SUDAH MENGEMBALIKAN") {
+          kembaliBadge = '<span class="badge badge-sudah"><i class="fa-solid fa-check me-1"></i> SUDAH</span>';
+        } else if (item.statusKembali === "BELUM MENGEMBALIKAN") {
+          kembaliBadge = '<span class="badge badge-belum"><i class="fa-solid fa-xmark me-1"></i> BELUM</span>';
+        }
+
+        html += `
+          <tr>
+            <td>${item.nik}</td>
+            <td>${item.nama}</td>
+            <td>${item.noHp || '-'}</td>
+            <td>${item.tablet || '-'}</td>
+            <td>${item.rfid || '-'}</td>
+            <td>${item.spider || '-'}</td>
+            <td class="text-center">${formBadge}</td>
+            <td class="text-center">${kembaliBadge}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    /* Kombinasi Filter Pencarian Teks & Klik Kartu Kategori */
+    function filterAssetTable() {
+      const query = document.getElementById("searchAsset").value.toLowerCase();
+      
+      const filtered = globalAssets.filter(a => {
+        const matchesQuery = a.nama.toLowerCase().includes(query) ||
+                             a.kategori.toLowerCase().includes(query) ||
+                             a.type.toLowerCase().includes(query) ||
+                             a.serial.toLowerCase().includes(query);
+
+        let matchesCard = true;
+        if (selectedCategoryFilter !== "") {
+          if (selectedCategoryFilter === "HT") {
+            matchesCard = a.kategori.toUpperCase().includes("HT") || 
+                          a.kategori.toUpperCase().includes("HANDY") || 
+                          a.kategori.toUpperCase().includes("TALKY");
+          } else if (selectedCategoryFilter === "BATERAI") {
+            matchesCard = a.kategori.toUpperCase().includes("BATERAI") || 
+                          a.kategori.toUpperCase().includes("BATTERY");
+          } else if (selectedCategoryFilter === "DOCK") {
+            matchesCard = a.kategori.toUpperCase().includes("DOCK");
+          } else if (selectedCategoryFilter === "CHARGER") {
+            matchesCard = a.kategori.toUpperCase().includes("CHARGER") && !a.kategori.toUpperCase().includes("DOCK");
+          } else {
+            matchesCard = a.kategori.toUpperCase().includes(selectedCategoryFilter.toUpperCase()) ||
+                          a.nama.toUpperCase().includes(selectedCategoryFilter.toUpperCase());
+          }
+        }
+
+        return matchesQuery && matchesCard;
+      });
+
+      renderAssetTable(filtered);
+    }
+  </script>
+</body>
+</html>
