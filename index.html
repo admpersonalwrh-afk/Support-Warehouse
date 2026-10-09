@@ -14,26 +14,11 @@
         .btn-custom { background-color: #1B365D; border-color: #1B365D; color: #ffffff; font-weight: 600; padding: 12px; border-radius: 10px; }
         .btn-custom:hover { background-color: #11223F; color: #ffffff; }
         .form-control { padding: 12px 16px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.95rem; }
-        
-        /* Style untuk tombol pilihan (Pills) ala Status MP */
-        .option-btn {
-            border: 1px solid #cbd5e1;
-            background-color: #ffffff;
-            color: #334155;
-            font-weight: 600;
-            padding: 10px;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-        }
-        .option-btn.active {
-            background-color: #1B365D;
-            border-color: #1B365D;
-            color: #ffffff;
-        }
+        .option-btn { border: 1px solid #cbd5e1; background-color: #ffffff; color: #334155; font-weight: 600; padding: 10px; border-radius: 10px; transition: all 0.2s ease; }
+        .option-btn.active { background-color: #1B365D; border-color: #1B365D; color: #ffffff; }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100 justify-content-between p-3 p-md-5">
-
     <div class="container my-auto" style="max-width: 480px;">
         
         <!-- HALAMAN 1: LOGIN HANYA NIK -->
@@ -45,20 +30,15 @@
                 <h3 class="fw-bold text-dark">Login Karyawan</h3>
                 <p class="text-muted small">Warehouse 1 Finished Goods</p>
             </div>
-
             <div class="mb-4">
                 <label class="form-label small fw-semibold text-secondary">NIK Karyawan <span class="text-danger">*</span></label>
                 <input type="text" id="loginNik" class="form-control" placeholder="Masukkan NIK Anda" onkeypress="if(event.key === 'Enter') handleLogin();">
             </div>
-
             <div id="loginAlert" class="alert py-2 small text-center d-none mb-3"></div>
-
-            <button type="button" onclick="handleLogin()" class="btn btn-custom w-100 shadow-sm">
-                MASUK
-            </button>
+            <button type="button" onclick="handleLogin()" class="btn btn-custom w-100 shadow-sm" id="loginBtn"> MASUK </button>
         </div>
 
-        <!-- HALAMAN 2: FORM UTAMA TRANSAKSI (HIDDEN AWALNYA) -->
+        <!-- HALAMAN 2: FORM UTAMA TRANSAKSI -->
         <div id="formSection" class="card-box p-4 p-md-5 d-none">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="backToLogin()">
@@ -66,14 +46,16 @@
                 </button>
                 <span id="displayNik" class="badge bg-light text-dark border px-3 py-2 small"></span>
             </div>
-
+            
             <div class="text-center mb-4">
                 <h4 class="fw-bold text-dark mb-1">Form Asset</h4>
+                <!-- BAGIAN NAMA YANG MUNCUL OTOMATIS -->
+                <p id="welcomeUserText" class="text-primary fw-semibold small mb-1">Halo, -</p>
                 <p class="text-muted small mb-0">Peminjaman & Pengembalian</p>
             </div>
 
             <form id="transactionForm" onsubmit="submitTransaction(event)">
-                <!-- Status Transaksi (Model Tombol Pill) -->
+                <!-- Status Transaksi -->
                 <div class="mb-3">
                     <label class="form-label small fw-semibold text-secondary d-block">Status Transaksi <span class="text-danger">*</span></label>
                     <div class="row g-2">
@@ -86,7 +68,7 @@
                     </div>
                 </div>
 
-                <!-- Bagian Manpower Group (Hanya muncul saat PENGAMBILAN) -->
+                <!-- Manpower Group -->
                 <div class="mb-3" id="groupManpowerWrapper">
                     <label class="form-label small fw-semibold text-secondary d-block">Manpower Group <span class="text-danger">*</span></label>
                     <div class="row g-2">
@@ -96,36 +78,30 @@
                         <div class="col-6">
                             <button type="button" class="btn option-btn w-100" id="btnGroupB" onclick="selectGroup('Group B')">Group B</button>
                         </div>
-			<div class="col-6">
+                        <div class="col-6">
                             <button type="button" class="btn option-btn w-100" id="btnGroupC" onclick="selectGroup('Group C')">Group C</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bagian Input Asset -->
+                <!-- Input Asset -->
                 <div class="mb-3">
                     <label class="form-label small fw-semibold text-secondary" id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></label>
                     <input type="text" id="tabletVal" class="form-control" required placeholder="Contoh: T01 / S01">
                 </div>
-
                 <div class="mb-3" id="rfidWrapper">
                     <label class="form-label small fw-semibold text-secondary">RFID Gun</label>
                     <input type="text" id="rfidVal" class="form-control" placeholder="Contoh: T01">
                 </div>
-
                 <div class="mb-4" id="spiderWrapper">
                     <label class="form-label small fw-semibold text-secondary">Spider Scanner</label>
                     <input type="text" id="spiderVal" class="form-control" placeholder="Contoh: S01">
                 </div>
 
                 <div id="formAlert" class="alert py-2 small text-center d-none mb-3"></div>
-
-                <button type="submit" id="submitBtn" class="btn btn-custom w-100 shadow-sm">
-                    SUBMIT
-                </button>
+                <button type="submit" id="submitBtn" class="btn btn-custom w-100 shadow-sm"> SUBMIT </button>
             </form>
         </div>
-
     </div>
 
     <footer class="text-center text-muted small mt-4">
@@ -133,16 +109,17 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxYnupSiVvfSBzrpT0EDr9SP7-XQVY4987l0rN45lxiLOQLE15ToY0rCeV0odYyTB5_vg/exec";
-
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxYnupSiVvfSBzrpT0EDr9SP7-XQVY4987l0rN45lxiLOQLE15ToY0rCeV0odYyTB5_vg/exec"; 
         let currentNik = "";
-        let selectedStatus = "PINJAM"; // Default Pengambilan
-        let selectedGroup = "";
+        let currentNama = "";
+        let selectedStatus = "PINJAM"; 
+        let selectedGroup = ""; 
 
-        function handleLogin() {
+        async function handleLogin() {
             const nikInput = document.getElementById('loginNik').value.trim();
             const alertBox = document.getElementById('loginAlert');
-            
+            const loginBtn = document.getElementById('loginBtn');
+
             if (!nikInput) {
                 alertBox.className = "alert alert-danger py-2 small text-center mb-3";
                 alertBox.innerText = "Silakan masukkan NIK terlebih dahulu!";
@@ -150,14 +127,39 @@
                 return;
             }
 
-            currentNik = nikInput;
-            document.getElementById('displayNik').innerText = "NIK: " + currentNik;
+            loginBtn.disabled = true;
+            loginBtn.innerText = "Memeriksa NIK...";
+            alertBox.classList.add('d-none');
 
-            // Transisi Tampilan Card
-            document.getElementById('loginSection').classList.add('d-none');
-            document.getElementById('formSection').classList.remove('d-none');
-            
-            updateFormLayout();
+            try {
+                // Ambil data nama dari Google Apps Script berdasarkan NIK
+                const response = await fetch(`${WEB_APP_URL}?action=getNama&nik=${nikInput}`);
+                const data = await response.json();
+                
+                currentNik = nikInput;
+                currentNama = data.nama || "Karyawan";
+
+                document.getElementById('displayNik').innerText = "NIK: " + currentNik;
+                document.getElementById('welcomeUserText').innerText = "Halo, " + currentNama;
+
+                // Transisi tampilan card
+                document.getElementById('loginSection').classList.add('d-none');
+                document.getElementById('formSection').classList.remove('d-none');
+                updateFormLayout();
+            } catch (err) {
+                console.error(err);
+                // Fallback jika gagal fetch, tetap izinkan masuk dengan nama default
+                currentNik = nikInput;
+                currentNama = "Karyawan " + currentNik;
+                document.getElementById('displayNik').innerText = "NIK: " + currentNik;
+                document.getElementById('welcomeUserText').innerText = "Halo, " + currentNama;
+
+                document.getElementById('loginSection').classList.add('d-none');
+                document.getElementById('formSection').classList.remove('d-none');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerText = "MASUK";
+            }
         }
 
         function backToLogin() {
@@ -172,7 +174,6 @@
             selectedStatus = status;
             document.getElementById('btnPinjam').classList.remove('active');
             document.getElementById('btnKembali').classList.remove('active');
-
             if (status === 'PINJAM') {
                 document.getElementById('btnPinjam').classList.add('active');
             } else {
@@ -185,16 +186,10 @@
             selectedGroup = groupName;
             document.getElementById('btnGroupA').classList.remove('active');
             document.getElementById('btnGroupB').classList.remove('active');
-	    document.getElementById('btnGroupC').classList.remove('active');
-
-            if (groupName === 'Group A') {
-                document.getElementById('btnGroupA').classList.add('active');
-            } else if (groupName === 'Group B') {
-                document.getElementById('btnGroupB').classList.add('active');
-            } else if (groupName === 'Group C') {
-                document.getElementById('btnGroupC').classList.add('active');
-            }
- 
+            document.getElementById('btnGroupC').classList.remove('active');
+            if (groupName === 'Group A') document.getElementById('btnGroupA').classList.add('active');
+            else if (groupName === 'Group B') document.getElementById('btnGroupB').classList.add('active');
+            else if (groupName === 'Group C') document.getElementById('btnGroupC').classList.add('active');
         }
 
         function updateFormLayout() {
@@ -205,21 +200,17 @@
             const tabletInput = document.getElementById('tabletVal');
 
             if (selectedStatus === 'PINJAM') {
-                // Munculkan Group dan semua kolom asset tambahan saat Pengambilan
                 groupWrapper.style.display = 'block';
                 rfidWrapper.style.display = 'block';
                 spiderWrapper.style.display = 'block';
                 labelTablet.innerHTML = 'No. Tablet / PDA <span class="text-danger">*</span>';
                 tabletInput.required = true;
             } else {
-                // Sembunyikan Group, RFID, dan Spider saat Pengembalian, hanya tampilkan input asset utama
                 groupWrapper.style.display = 'none';
                 rfidWrapper.style.display = 'none';
                 spiderWrapper.style.display = 'none';
                 labelTablet.innerHTML = 'No. Asset yang Dikembalikan <span class="text-danger">*</span>';
                 tabletInput.required = true;
-                
-                // Kosongkan nilai field yang disembunyikan agar bersih
                 document.getElementById('rfidVal').value = "";
                 document.getElementById('spiderVal').value = "";
             }
@@ -227,8 +218,6 @@
 
         async function submitTransaction(event) {
             event.preventDefault();
-
-            // Validasi manual group manpower jika status Pengambilan (PINJAM)
             if (selectedStatus === 'PINJAM' && !selectedGroup) {
                 alert("Silakan pilih Group terlebih dahulu!");
                 return;
@@ -236,14 +225,13 @@
 
             const btn = document.getElementById('submitBtn');
             const alertBox = document.getElementById('formAlert');
-            
             btn.disabled = true;
             btn.innerText = "Mengirim...";
             alertBox.classList.add('d-none');
 
             const payload = {
                 nik: currentNik,
-                nama: "Karyawan " + currentNik,
+                nama: currentNama, // Mengirim nama asli yang ditarik dari database NIK
                 status: selectedStatus,
                 manpowerGroup: selectedStatus === 'PINJAM' ? selectedGroup : "-",
                 tablet: document.getElementById('tabletVal').value.trim(),
@@ -258,12 +246,10 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
                 alertBox.className = "alert alert-success py-2 small text-center mb-3";
                 alertBox.innerText = "Data berhasil diinput ke system!";
                 alertBox.classList.remove('d-none');
-                
-                // Reset input asset setelah berhasil kirim
+
                 document.getElementById('tabletVal').value = "";
                 document.getElementById('rfidVal').value = "";
                 document.getElementById('spiderVal').value = "";
