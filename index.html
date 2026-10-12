@@ -97,7 +97,10 @@
                 <p class="text-muted small">Silakan masukkan NIK Anda untuk melanjutkan</p>
             </div>
             <div class="mb-4">
-                <label class="form-label small fw-semibold text-secondary">NIK Karyawan <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
+                    <span>NIK Karyawan <span class="text-danger">*</span></span>
+                    <span class="text-muted fw-normal" style="font-size: 0.8rem;">Contoh: 214006291</span>
+                </label>
                 <input type="text" id="loginNik" class="form-control" placeholder="Contoh: 214006291" onkeypress="if(event.key === 'Enter') handleLogin();">
             </div>
             <div id="loginAlert" class="alert py-2 small text-center d-none mb-3"></div>
@@ -135,21 +138,33 @@
 
                 <!-- Input Asset (Dipindah ke Atas) -->
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold text-secondary" id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-semibold text-secondary d-flex justify-content-between" id="labelTabletContainer">
+                        <span id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></span>
+                        <span class="text-muted fw-normal" style="font-size: 0.8rem;" id="tabletExample">Contoh: T01</span>
+                    </label>
                     <input type="text" id="tabletVal" class="form-control" required placeholder="Contoh: T01 / S01">
                 </div>
                 <div class="mb-3" id="rfidWrapper">
-                    <label class="form-label small fw-semibold text-secondary">RFID Gun</label>
+                    <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
+                        <span>RFID Gun</span>
+                        <span class="text-muted fw-normal" style="font-size: 0.8rem;">Contoh: T01</span>
+                    </label>
                     <input type="text" id="rfidVal" class="form-control" placeholder="Contoh: T01">
                 </div>
                 <div class="mb-3" id="spiderWrapper">
-                    <label class="form-label small fw-semibold text-secondary">Spider Scanner</label>
+                    <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
+                        <span>Spider Scanner</span>
+                        <span class="text-muted fw-normal" style="font-size: 0.8rem;">Contoh: S01</span>
+                    </label>
                     <input type="text" id="spiderVal" class="form-control" placeholder="Contoh: S01">
                 </div>
 
                 <!-- Manpower Group -->
                 <div class="mb-4" id="groupManpowerWrapper">
-                    <label class="form-label small fw-semibold text-secondary d-block">Manpower Group <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
+                        <span>Manpower Group <span class="text-danger">*</span></span>
+                        <span class="text-muted fw-normal" style="font-size: 0.8rem;">Pilih salah satu</span>
+                    </label>
                     <div class="row g-2">
                         <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnGroupA" onclick="selectGroup('Group A')">Group A</button></div>
                         <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnGroupB" onclick="selectGroup('Group B')">Group B</button></div>
@@ -339,6 +354,7 @@
             const rfidWrapper = document.getElementById('rfidWrapper');
             const spiderWrapper = document.getElementById('spiderWrapper');
             const labelTablet = document.getElementById('labelTablet');
+            const tabletExample = document.getElementById('tabletExample');
             const tabletInput = document.getElementById('tabletVal');
 
             if (selectedStatus === 'PINJAM') {
@@ -346,12 +362,14 @@
                 rfidWrapper.style.display = 'block';
                 spiderWrapper.style.display = 'block';
                 labelTablet.innerHTML = 'No. Tablet / PDA <span class="text-danger">*</span>';
+                tabletExample.innerText = 'Contoh: T01';
                 tabletInput.required = true;
             } else {
                 groupWrapper.style.display = 'none';
                 rfidWrapper.style.display = 'block';
                 spiderWrapper.style.display = 'block';
                 labelTablet.innerHTML = 'No. Tablet / PDA yang Dikembalikan';
+                tabletExample.innerText = 'Contoh: T01';
                 tabletInput.required = false;
             }
         }
