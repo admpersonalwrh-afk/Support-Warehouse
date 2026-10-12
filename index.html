@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset PDA</title>
     
-    <!-- Konfigurasi agar bisa jadi Logo Aplikasi di HP -->
     <meta name="theme-color" content="#1B365D">
     <link rel="apple-touch-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjjQ0KG8XLk69cJr3Es786wKiB3ug-v46kmbatp05O_-Lop7co52YEUvS&s=10">
     <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjjQ0KG8XLk69cJr3Es786wKiB3ug-v46kmbatp05O_-Lop7co52YEUvS&s=10">
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -135,8 +133,22 @@
                     </div>
                 </div>
 
+                <!-- Input Asset (Dipindah ke Atas agar tidak hilang/tertutup) -->
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-secondary" id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></label>
+                    <input type="text" id="tabletVal" class="form-control" required placeholder="Contoh: T01 / S01">
+                </div>
+                <div class="mb-3" id="rfidWrapper">
+                    <label class="form-label small fw-semibold text-secondary">RFID Gun</label>
+                    <input type="text" id="rfidVal" class="form-control" placeholder="Contoh: T01">
+                </div>
+                <div class="mb-3" id="spiderWrapper">
+                    <label class="form-label small fw-semibold text-secondary">Spider Scanner</label>
+                    <input type="text" id="spiderVal" class="form-control" placeholder="Contoh: S01">
+                </div>
+
                 <!-- Manpower Group -->
-                <div class="mb-3" id="groupManpowerWrapper">
+                <div class="mb-4" id="groupManpowerWrapper">
                     <label class="form-label small fw-semibold text-secondary d-block">Manpower Group <span class="text-danger">*</span></label>
                     <div class="row g-2">
                         <div class="col-6"><button type="button" class="btn option-btn w-100" id="btnGroupA" onclick="selectGroup('Group A')">Group A</button></div>
@@ -147,23 +159,19 @@
                     </div>
                 </div>
 
-                <!-- Input Asset -->
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold text-secondary" id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></label>
-                    <input type="text" id="tabletVal" class="form-control" required placeholder="Contoh: T01 / S01">
-                </div>
-                <div class="mb-3" id="rfidWrapper">
-                    <label class="form-label small fw-semibold text-secondary">RFID Gun</label>
-                    <input type="text" id="rfidVal" class="form-control" placeholder="Contoh: T01">
-                </div>
-                <div class="mb-4" id="spiderWrapper">
-                    <label class="form-label small fw-semibold text-secondary">Spider Scanner</label>
-                    <input type="text" id="spiderVal" class="form-control" placeholder="Contoh: S01">
-                </div>
-
                 <div id="formAlert" class="alert py-2 small text-center d-none mb-3"></div>
                 <button type="submit" id="submitBtn" class="btn btn-custom w-100 shadow-sm"> SUBMIT </button>
             </form>
+        </div>
+
+        <!-- HALAMAN 3: SUKSES (TAMPILAN BERBEDA) -->
+        <div id="successSection" class="card-box p-4 p-md-5 d-none text-center">
+            <div class="mb-3 text-success">
+                <i class="fa-solid fa-circle-check fa-4x"></i>
+            </div>
+            <h3 class="fw-bold text-dark mb-2">Berhasil Disubmit!</h3>
+            <p id="successMessage" class="text-muted small mb-4">Data transaksi Anda telah berhasil tercatat di sistem.</p>
+            <button type="button" onclick="resetToNewTransaction()" class="btn btn-custom w-100 shadow-sm">KEMBALI KE MENU UTAMA</button>
         </div>
     </div>
 
@@ -172,11 +180,26 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxwjReP_45R0CcSq57d2DPU0w_6F7mqhWhyXWCWWNwQu4LE0pQgALWf5FZINErMCl6JcA/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxxxzJOpyQsgdGQMRkt3mQAFIoSTn3j0TCPj7z5fwo4NyU_m_IIsSz5lltv765O4eliVQ/exec"; 
         let currentNik = "";
         let currentNama = "";
         let selectedStatus = "PINJAM"; 
         let selectedGroup = ""; 
+
+        // Cek LocalStorage saat halaman pertama kali dibuka agar tidak perlu login ulang
+        window.onload = function() {
+            const savedNik = localStorage.getItem("saved_nik");
+            const savedNama = localStorage.getItem("saved_nama");
+            if (savedNik && savedNama) {
+                currentNik = savedNik;
+                currentNama = savedNama;
+                document.getElementById('displayNik').innerText = "NIK: " + currentNik;
+                document.getElementById('welcomeUserText').innerText = "Halo, " + currentNama;
+                document.getElementById('loginSection').classList.add('d-none');
+                document.getElementById('formSection').classList.remove('d-none');
+                checkActiveAssetAndAutoSelect();
+            }
+        };
 
         async function handleLogin() {
             const nikInput = document.getElementById('loginNik').value.trim();
@@ -201,36 +224,69 @@
                 currentNik = nikInput;
                 currentNama = data.nama || "Karyawan";
 
+                // Simpan ke LocalStorage agar session tersimpan
+                localStorage.setItem("saved_nik", currentNik);
+                localStorage.setItem("saved_nama", currentNama);
+
                 document.getElementById('displayNik').innerText = "NIK: " + currentNik;
                 document.getElementById('welcomeUserText').innerText = "Halo, " + currentNama;
 
                 document.getElementById('loginSection').classList.add('d-none');
                 document.getElementById('formSection').classList.remove('d-none');
-                updateFormLayout();
+                checkActiveAssetAndAutoSelect();
             } catch (err) {
                 console.error(err);
                 currentNik = nikInput;
                 currentNama = "Karyawan " + currentNik;
+                localStorage.setItem("saved_nik", currentNik);
+                localStorage.setItem("saved_nama", currentNama);
+
                 document.getElementById('displayNik').innerText = "NIK: " + currentNik;
                 document.getElementById('welcomeUserText').innerText = "Halo, " + currentNama;
 
                 document.getElementById('loginSection').classList.add('d-none');
                 document.getElementById('formSection').classList.remove('d-none');
+                checkActiveAssetAndAutoSelect();
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.innerText = "MASUK";
             }
         }
 
+        async function checkActiveAssetAndAutoSelect() {
+            const tabletInput = document.getElementById('tabletVal');
+            const rfidInput = document.getElementById('rfidVal');
+            const spiderInput = document.getElementById('spiderVal');
+
+            tabletInput.value = "Memeriksa status...";
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getAssetAktif&nik=${currentNik}`);
+                const data = await response.json();
+                
+                if (data.tablet || data.rfid || data.spider) {
+                    // Jika ada asset aktif yang belum dikembalikan, AUTO KEMBALI
+                    selectStatus('KEMBALI');
+                    tabletInput.value = data.tablet || "";
+                    rfidInput.value = data.rfid || "";
+                    spiderInput.value = data.spider || "";
+                } else {
+                    // Jika bersih/tidak ada tanggungan pinjaman, default ke PINJAM
+                    selectStatus('PINJAM');
+                }
+            } catch (e) {
+                console.error(e);
+                selectStatus('PINJAM');
+            }
+        }
+
         function backToLogin() {
+            localStorage.removeItem("saved_nik");
+            localStorage.removeItem("saved_nama");
             document.getElementById('formSection').classList.add('d-none');
+            document.getElementById('successSection').classList.add('d-none');
             document.getElementById('loginSection').classList.remove('d-none');
             document.getElementById('loginNik').value = "";
             document.getElementById('loginAlert').classList.add('d-none');
-            document.getElementById('formAlert').classList.add('d-none');
-            document.getElementById('tabletVal').value = "";
-            document.getElementById('rfidVal').value = "";
-            document.getElementById('spiderVal').value = "";
         }
 
         async function selectStatus(status) {
@@ -249,7 +305,6 @@
                 spiderInput.value = "";
             } else {
                 document.getElementById('btnKembali').classList.add('active');
-                
                 tabletInput.value = "Memuat asset...";
                 rfidInput.value = "Memuat...";
                 spiderInput.value = "Memuat...";
@@ -297,7 +352,6 @@
                 labelTablet.innerHTML = 'No. Tablet / PDA <span class="text-danger">*</span>';
                 tabletInput.required = true;
             } else {
-                // Saat KEMBALI, tampilkan semua kolom agar semua asset yang dipinjam (Tablet, RFID, Spider) muncul utuh
                 groupWrapper.style.display = 'none';
                 rfidWrapper.style.display = 'block';
                 spiderWrapper.style.display = 'block';
@@ -314,19 +368,21 @@
             }
 
             const btn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('formAlert');
             btn.disabled = true;
             btn.innerText = "Mengirim...";
-            alertBox.classList.add('d-none');
+
+            const tVal = document.getElementById('tabletVal').value.trim();
+            const rVal = document.getElementById('rfidVal').value.trim();
+            const sVal = document.getElementById('spiderVal').value.trim();
 
             const payload = {
                 nik: currentNik,
                 nama: currentNama,
                 status: selectedStatus,
                 manpowerGroup: selectedStatus === 'PINJAM' ? selectedGroup : "-",
-                tablet: document.getElementById('tabletVal').value.trim(),
-                rfid: document.getElementById('rfidVal').value.trim(),
-                spider: document.getElementById('spiderVal').value.trim()
+                tablet: tVal,
+                rfid: rVal,
+                spider: sVal
             };
 
             try {
@@ -337,27 +393,40 @@
                     body: JSON.stringify(payload)
                 });
                 
-                alertBox.className = "alert alert-success py-2 small text-center mb-3";
-                alertBox.innerText = "Data berhasil diinput ke system!";
-                alertBox.classList.remove('d-none');
+                // Tampilkan Halaman Sukses Berbeda
+                document.getElementById('formSection').classList.add('d-none');
+                document.getElementById('successSection').classList.remove('d-none');
+                
+                let details = `Berhasil mencatat transaksi <b>${selectedStatus}</b> untuk <b>${currentNama}</b>.<br>`;
+                if(tVal) details += `• Tablet/PDA: ${tVal}<br>`;
+                if(rVal) details += `• RFID Gun: ${rVal}<br>`;
+                if(sVal) details += `• Spider: ${sVal}`;
+                document.getElementById('successMessage').innerHTML = details;
 
-                if (selectedStatus === 'KEMBALI') {
-                    setTimeout(() => {
-                        backToLogin(); 
-                    }, 1200);
-                } else {
-                    document.getElementById('tabletVal').value = "";
-                    document.getElementById('rfidVal').value = "";
-                    document.getElementById('spiderVal').value = "";
-                }
             } catch (err) {
                 console.error(err);
-                alertBox.className = "alert alert-danger py-2 small text-center mb-3";
-                alertBox.innerText = "Gagal mengirim data.";
-                alertBox.classList.remove('d-none');
+                alert("Gagal mengirim data. Silakan coba lagi.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "SUBMIT";
+            }
+        }
+
+        function resetToNewTransaction() {
+            // Jika proses KEMBALI selesai, hapus sesi login (logout otomatis)
+            if (selectedStatus === 'KEMBALI') {
+                backToLogin();
+            } else {
+                // Jika PINJAM, kembali ke form utama dengan reset bersih
+                document.getElementById('successSection').classList.add('d-none');
+                document.getElementById('formSection').classList.remove('d-none');
+                document.getElementById('tabletVal').value = "";
+                document.getElementById('rfidVal').value = "";
+                document.getElementById('spiderVal').value = "";
+                selectedGroup = "";
+                ['btnGroupA', 'btnGroupB', 'btnGroupC', 'btnNonShift', 'btnDeptLain'].forEach(id => {
+                    document.getElementById(id).classList.remove('active');
+                });
             }
         }
     </script>
