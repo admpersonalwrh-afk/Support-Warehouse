@@ -133,7 +133,7 @@
                     </div>
                 </div>
 
-                <!-- Input Asset (Dipindah ke Atas agar tidak hilang/tertutup) -->
+                <!-- Input Asset (Dipindah ke Atas) -->
                 <div class="mb-3">
                     <label class="form-label small fw-semibold text-secondary" id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></label>
                     <input type="text" id="tabletVal" class="form-control" required placeholder="Contoh: T01 / S01">
@@ -164,7 +164,7 @@
             </form>
         </div>
 
-        <!-- HALAMAN 3: SUKSES (TAMPILAN BERBEDA) -->
+        <!-- HALAMAN 3: SUKSES (Hanya untuk PINJAM) -->
         <div id="successSection" class="card-box p-4 p-md-5 d-none text-center">
             <div class="mb-3 text-success">
                 <i class="fa-solid fa-circle-check fa-4x"></i>
@@ -389,6 +389,13 @@
                     body: JSON.stringify(payload)
                 });
                 
+                // Jika statusnya KEMBALI, setelah submit langsung otomatis LOGOUT ke menu login NIK
+                if (selectedStatus === 'KEMBALI') {
+                    backToLogin();
+                    return;
+                }
+
+                // Jika statusnya PINJAM, tampilkan halaman sukses
                 document.getElementById('formSection').classList.add('d-none');
                 document.getElementById('successSection').classList.remove('d-none');
                 
@@ -410,11 +417,6 @@
         function resetToNewTransaction() {
             document.getElementById('successSection').classList.add('d-none');
             document.getElementById('formSection').classList.remove('d-none');
-            
-            // Jika transaksi sebelumnya adalah KEMBALI, setelah sukses data terkirim, 
-            // fungsi submit langsung logout (backToLogin). 
-            // Namun jika kembali ke menu utama, kita panggil checkActiveAssetAndAutoSelect() 
-            // agar otomatis mendeteksi jika masih ada/sudah bersih pinjamannya.
             checkActiveAssetAndAutoSelect();
         }
     </script>
