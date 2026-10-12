@@ -411,7 +411,10 @@
             document.getElementById('successSection').classList.add('d-none');
             document.getElementById('formSection').classList.remove('d-none');
             
-            // Otomatis mengecek dan mengarahkan kembali ke kolom KEMBALI jika masih ada tanggungan asset aktif
+            // Jika transaksi sebelumnya adalah KEMBALI, setelah sukses data terkirim, 
+            // fungsi submit langsung logout (backToLogin). 
+            // Namun jika kembali ke menu utama, kita panggil checkActiveAssetAndAutoSelect() 
+            // agar otomatis mendeteksi jika masih ada/sudah bersih pinjamannya.
             checkActiveAssetAndAutoSelect();
         }
     </script>
