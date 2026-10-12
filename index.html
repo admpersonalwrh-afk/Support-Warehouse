@@ -101,7 +101,7 @@
                     <span>NIK Karyawan <span class="text-danger">*</span></span>
                     <span class="text-muted fw-normal" style="font-size: 0.8rem;">Contoh: 214006291</span>
                 </label>
-                <input type="text" id="loginNik" class="form-control" placeholder="Contoh: 214006291" onkeypress="if(event.key === 'Enter') handleLogin();">
+                <input type="text" id="loginNik" class="form-control" onkeypress="if(event.key === 'Enter') handleLogin();">
             </div>
             <div id="loginAlert" class="alert py-2 small text-center d-none mb-3"></div>
             <button type="button" onclick="handleLogin()" class="btn btn-custom w-100 shadow-sm" id="loginBtn"> MASUK </button>
@@ -142,21 +142,21 @@
                         <span id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></span>
                         <span class="text-muted fw-normal" style="font-size: 0.8rem;" id="tabletExample">Contoh: T01</span>
                     </label>
-                    <input type="text" id="tabletVal" class="form-control" required placeholder="Contoh: T01 / S01">
+                    <input type="text" id="tabletVal" class="form-control">
                 </div>
                 <div class="mb-3" id="rfidWrapper">
                     <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
                         <span>RFID Gun</span>
                         <span class="text-muted fw-normal" style="font-size: 0.8rem;">Contoh: T01</span>
                     </label>
-                    <input type="text" id="rfidVal" class="form-control" placeholder="Contoh: T01">
+                    <input type="text" id="rfidVal" class="form-control">
                 </div>
                 <div class="mb-3" id="spiderWrapper">
                     <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
                         <span>Spider Scanner</span>
                         <span class="text-muted fw-normal" style="font-size: 0.8rem;">Contoh: S01</span>
                     </label>
-                    <input type="text" id="spiderVal" class="form-control" placeholder="Contoh: S01">
+                    <input type="text" id="spiderVal" class="form-control">
                 </div>
 
                 <!-- Manpower Group -->
