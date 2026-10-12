@@ -186,7 +186,6 @@
         let selectedStatus = "PINJAM"; 
         let selectedGroup = ""; 
 
-        // Cek LocalStorage saat halaman pertama kali dibuka agar tidak perlu login ulang
         window.onload = function() {
             const savedNik = localStorage.getItem("saved_nik");
             const savedNama = localStorage.getItem("saved_nama");
@@ -224,7 +223,6 @@
                 currentNik = nikInput;
                 currentNama = data.nama || "Karyawan";
 
-                // Simpan ke LocalStorage agar session tersimpan
                 localStorage.setItem("saved_nik", currentNik);
                 localStorage.setItem("saved_nama", currentNama);
 
@@ -264,13 +262,11 @@
                 const data = await response.json();
                 
                 if (data.tablet || data.rfid || data.spider) {
-                    // Jika ada asset aktif yang belum dikembalikan, AUTO KEMBALI
                     selectStatus('KEMBALI');
                     tabletInput.value = data.tablet || "";
                     rfidInput.value = data.rfid || "";
                     spiderInput.value = data.spider || "";
                 } else {
-                    // Jika bersih/tidak ada tanggungan pinjaman, default ke PINJAM
                     selectStatus('PINJAM');
                 }
             } catch (e) {
@@ -393,7 +389,6 @@
                     body: JSON.stringify(payload)
                 });
                 
-                // Tampilkan Halaman Sukses Berbeda
                 document.getElementById('formSection').classList.add('d-none');
                 document.getElementById('successSection').classList.remove('d-none');
                 
@@ -413,21 +408,11 @@
         }
 
         function resetToNewTransaction() {
-            // Jika proses KEMBALI selesai, hapus sesi login (logout otomatis)
-            if (selectedStatus === 'KEMBALI') {
-                backToLogin();
-            } else {
-                // Jika PINJAM, kembali ke form utama dengan reset bersih
-                document.getElementById('successSection').classList.add('d-none');
-                document.getElementById('formSection').classList.remove('d-none');
-                document.getElementById('tabletVal').value = "";
-                document.getElementById('rfidVal').value = "";
-                document.getElementById('spiderVal').value = "";
-                selectedGroup = "";
-                ['btnGroupA', 'btnGroupB', 'btnGroupC', 'btnNonShift', 'btnDeptLain'].forEach(id => {
-                    document.getElementById(id).classList.remove('active');
-                });
-            }
+            document.getElementById('successSection').classList.add('d-none');
+            document.getElementById('formSection').classList.remove('d-none');
+            
+            // Otomatis mengecek dan mengarahkan kembali ke kolom KEMBALI jika masih ada tanggungan asset aktif
+            checkActiveAssetAndAutoSelect();
         }
     </script>
 </body>
