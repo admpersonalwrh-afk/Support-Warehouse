@@ -89,7 +89,7 @@
 <body class="d-flex flex-column min-vh-100 justify-content-between p-3 p-md-5">
     <div class="container my-auto" style="max-width: 480px;">
         
-        <!-- HALAMAN 1: LOGIN NIK -->
+        <!--halaman login, jangan edit ya ~jon-->
         <div id="loginSection" class="card-box p-4 p-md-5">
             <div class="text-center mb-4">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjjQ0KG8XLk69cJr3Es786wKiB3ug-v46kmbatp05O_-Lop7co52YEUvS&s=10" alt="Logo PT" class="company-logo mb-3">
@@ -107,7 +107,7 @@
             <button type="button" onclick="handleLogin()" class="btn btn-custom w-100 shadow-sm" id="loginBtn"> MASUK </button>
         </div>
 
-        <!-- HALAMAN 2: FORM UTAMA TRANSAKSI -->
+        <!--form transaksi, jangan edit ya ~jon-->
         <div id="formSection" class="card-box p-4 p-md-5 d-none">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="backToLogin()">
@@ -123,7 +123,7 @@
             </div>
 
             <form id="transactionForm" onsubmit="submitTransaction(event)">
-                <!-- Status Transaksi -->
+                <!--status transaksi, jangan edit ya ~jon-->
                 <div class="mb-3">
                     <label class="form-label small fw-semibold text-secondary d-block">Status Transaksi <span class="text-danger">*</span></label>
                     <div class="row g-2">
@@ -136,7 +136,7 @@
                     </div>
                 </div>
 
-                <!-- Input Asset -->
+                <!--asset input, jangan edit ya ~jon-->
                 <div class="mb-3">
                     <label class="form-label small fw-semibold text-secondary d-flex justify-content-between" id="labelTabletContainer">
                         <span id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></span>
@@ -159,7 +159,7 @@
                     <input type="text" id="spiderVal" class="form-control">
                 </div>
 
-                <!-- Manpower Group -->
+                <!--grup mp, jangan edit ya ~jon-->
                 <div class="mb-4" id="groupManpowerWrapper">
                     <label class="form-label small fw-semibold text-secondary d-flex justify-content-between">
                         <span>Manpower Group <span class="text-danger">*</span></span>
@@ -179,7 +179,7 @@
             </form>
         </div>
 
-        <!-- HALAMAN 3: SUKSES -->
+        <!--sukses, jangan edit ya ~jon -->
         <div id="successSection" class="card-box p-4 p-md-5 d-none text-center">
             <div class="mb-3 text-success">
                 <i class="fa-solid fa-circle-check fa-4x"></i>
@@ -227,7 +227,7 @@
                 return;
             }
 
-            // Validasi NIK wajib tepat 9 digit angka
+            // validasi nik, jangan edit ~jon
             if (!/^\d{9}$/.test(nikInput)) {
                 alertBox.className = "alert alert-danger py-2 small text-center mb-3";
                 alertBox.innerText = "Masukkan NIK dengan benar!";
