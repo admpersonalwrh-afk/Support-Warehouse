@@ -227,6 +227,14 @@
                 return;
             }
 
+            // Validasi NIK wajib tepat 9 digit angka
+            if (!/^\d{9}$/.test(nikInput)) {
+                alertBox.className = "alert alert-danger py-2 small text-center mb-3";
+                alertBox.innerText = "NIK harus terdiri dari tepat 9 digit angka!";
+                alertBox.classList.remove('d-none');
+                return;
+            }
+
             loginBtn.disabled = true;
             loginBtn.innerText = "Memeriksa NIK...";
             alertBox.classList.add('d-none');
@@ -403,7 +411,6 @@
             };
 
             try {
-                // mode: 'no-cors' dihapus agar respons error dari Apps Script bisa dibaca
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -412,23 +419,20 @@
                 
                 const result = await response.json();
 
-                // CEK JIKA BACKEND MENGIRIM STATUS ERROR / BENTROK
                 if (result.status === "error") {
                     alertBox.className = "alert alert-danger py-2 small text-center mb-3";
                     alertBox.innerHTML = result.message.replace(/\n/g, '<br>');
                     alertBox.classList.remove('d-none');
                     btn.disabled = false;
                     btn.innerText = "SUBMIT";
-                    return; // Batalkan proses sukses
+                    return; 
                 }
                 
-                // Jika statusnya KEMBALI, setelah submit langsung otomatis LOGOUT ke menu login NIK
                 if (selectedStatus === 'KEMBALI') {
                     backToLogin();
                     return;
                 }
 
-                // Jika statusnya PINJAM, tampilkan halaman sukses
                 document.getElementById('formSection').classList.add('d-none');
                 document.getElementById('successSection').classList.remove('d-none');
                 
