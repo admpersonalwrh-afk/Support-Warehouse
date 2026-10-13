@@ -136,7 +136,7 @@
                     </div>
                 </div>
 
-                <!-- Input Asset (Dipindah ke Atas) -->
+                <!-- Input Asset -->
                 <div class="mb-3">
                     <label class="form-label small fw-semibold text-secondary d-flex justify-content-between" id="labelTabletContainer">
                         <span id="labelTablet">No. Tablet / PDA <span class="text-danger">*</span></span>
@@ -179,7 +179,7 @@
             </form>
         </div>
 
-        <!-- HALAMAN 3: SUKSES (Hanya untuk PINJAM) -->
+        <!-- HALAMAN 3: SUKSES -->
         <div id="successSection" class="card-box p-4 p-md-5 d-none text-center">
             <div class="mb-3 text-success">
                 <i class="fa-solid fa-circle-check fa-4x"></i>
@@ -382,8 +382,11 @@
             }
 
             const btn = document.getElementById('submitBtn');
+            const alertBox = document.getElementById('formAlert');
+            
             btn.disabled = true;
             btn.innerText = "Mengirim...";
+            alertBox.classList.add('d-none');
 
             const tVal = document.getElementById('tabletVal').value.trim();
             const rVal = document.getElementById('rfidVal').value.trim();
@@ -400,12 +403,24 @@
             };
 
             try {
-                await fetch(WEB_APP_URL, {
+                // mode: 'no-cors' dihapus agar respons error dari Apps Script bisa dibaca
+                const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
+                
+                const result = await response.json();
+
+                // CEK JIKA BACKEND MENGIRIM STATUS ERROR / BENTROK
+                if (result.status === "error") {
+                    alertBox.className = "alert alert-danger py-2 small text-center mb-3";
+                    alertBox.innerHTML = result.message.replace(/\n/g, '<br>');
+                    alertBox.classList.remove('d-none');
+                    btn.disabled = false;
+                    btn.innerText = "SUBMIT";
+                    return; // Batalkan proses sukses
+                }
                 
                 // Jika statusnya KEMBALI, setelah submit langsung otomatis LOGOUT ke menu login NIK
                 if (selectedStatus === 'KEMBALI') {
@@ -425,8 +440,9 @@
 
             } catch (err) {
                 console.error(err);
-                alert("Gagal mengirim data. Silakan coba lagi.");
-            } finally {
+                alertBox.className = "alert alert-danger py-2 small text-center mb-3";
+                alertBox.innerText = "Gagal mengirim data atau terjadi gangguan koneksi.";
+                alertBox.classList.remove('d-none');
                 btn.disabled = false;
                 btn.innerText = "SUBMIT";
             }
