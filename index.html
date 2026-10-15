@@ -195,7 +195,7 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzTsxAidNaazbg3JriUxB-6m9zC854sFR0JTxFT8NiTQCSEEISHw4giabyLNYAfvepPYw/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyk4GWWjdfF4vAcXB6V-lnaelK56Bi0DnyWrQo2yKKF6CPqYfExEUPOIsasbSgXQB6Lkg/exec"; 
         let currentNik = "";
         let currentNama = "";
         let selectedStatus = "PINJAM"; 
@@ -423,8 +423,6 @@
                     alertBox.className = "alert alert-danger py-2 small text-center mb-3";
                     alertBox.innerHTML = result.message.replace(/\n/g, '<br>');
                     alertBox.classList.remove('d-none');
-                    btn.disabled = false;
-                    btn.innerText = "SUBMIT";
                     return; 
                 }
                 
@@ -447,6 +445,8 @@
                 alertBox.className = "alert alert-danger py-2 small text-center mb-3";
                 alertBox.innerText = "Gagal mengirim data atau terjadi gangguan koneksi.";
                 alertBox.classList.remove('d-none');
+            } finally {
+                // DIJAMIN TOMBOL KEMBALI NORMAL APAPUN KONDISINYA
                 btn.disabled = false;
                 btn.innerText = "SUBMIT";
             }
