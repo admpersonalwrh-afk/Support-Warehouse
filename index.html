@@ -109,15 +109,17 @@
 
         <!--form transaksi, jangan edit ya ~jon-->
         <div id="formSection" class="card-box p-4 p-md-5 d-none">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Bagian Atas: Tombol Ganti NIK & Info NIK + Refresh -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="backToLogin()">
                     <i class="fa-solid fa-arrow-left me-1"></i> Ganti NIK
                 </button>
-                <!-- TOMBOL REFRESH BARU -->
-                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" id="refreshBtn" onclick="checkActiveAssetAndAutoSelect()" title="Muat Ulang Status Aset">
-                    <i class="fa-solid fa-rotate-right me-1"></i> Refresh
-                </button>
-                <span id="displayNik" class="badge bg-light text-dark border px-3 py-2 small"></span>
+                <div class="text-end">
+                    <span id="displayNik" class="badge bg-light text-dark border px-3 py-2 small d-block mb-1"></span>
+                    <button type="button" class="btn btn-sm btn-light border text-primary rounded-pill px-2 py-0" style="font-size: 0.75rem;" id="refreshBtn" onclick="checkActiveAssetAndAutoSelect()" title="Muat Ulang Status Aset">
+                        <i class="fa-solid fa-rotate-right me-1"></i> Refresh Status
+                    </button>
+                </div>
             </div>
             
             <div class="text-center mb-4">
