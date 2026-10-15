@@ -113,6 +113,10 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="backToLogin()">
                     <i class="fa-solid fa-arrow-left me-1"></i> Ganti NIK
                 </button>
+                <!-- TOMBOL REFRESH BARU -->
+                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" id="refreshBtn" onclick="checkActiveAssetAndAutoSelect()" title="Muat Ulang Status Aset">
+                    <i class="fa-solid fa-rotate-right me-1"></i> Refresh
+                </button>
                 <span id="displayNik" class="badge bg-light text-dark border px-3 py-2 small"></span>
             </div>
             
@@ -195,7 +199,7 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1WO8rA2bvLuwObGYl4RzTLpLnzpRr6M1FDaiPlfkICiTdbBZhRe3Iq4lnUJ7FOWNB/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyk4GWWjdfF4vAcXB6V-lnaelK56Bi0DnyWrQo2yKKF6CPqYfExEUPOIsasbSgXQB6Lkg/exec"; 
         let currentNik = "";
         let currentNama = "";
         let selectedStatus = "PINJAM"; 
@@ -278,8 +282,11 @@
             const tabletInput = document.getElementById('tabletVal');
             const rfidInput = document.getElementById('rfidVal');
             const spiderInput = document.getElementById('spiderVal');
+            const refreshBtn = document.getElementById('refreshBtn');
 
+            if (refreshBtn) refreshBtn.disabled = true;
             tabletInput.value = "Memeriksa status...";
+            
             try {
                 const response = await fetch(`${WEB_APP_URL}?action=getAssetAktif&nik=${currentNik}`);
                 const data = await response.json();
@@ -295,6 +302,8 @@
             } catch (e) {
                 console.error(e);
                 selectStatus('PINJAM');
+            } finally {
+                if (refreshBtn) refreshBtn.disabled = false;
             }
         }
 
@@ -446,7 +455,6 @@
                 alertBox.innerText = "Gagal mengirim data atau terjadi gangguan koneksi.";
                 alertBox.classList.remove('d-none');
             } finally {
-                // DIJAMIN TOMBOL KEMBALI NORMAL APAPUN KONDISINYA
                 btn.disabled = false;
                 btn.innerText = "SUBMIT";
             }
